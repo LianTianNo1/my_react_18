@@ -3,6 +3,10 @@ lockfileVersion: '6.0'
 importers:
 
   .:
+    dependencies:
+      react:
+        specifier: ^1.0.0
+        version: link:packages/react
     devDependencies:
       '@commitlint/cli':
         specifier: ^18.6.0
@@ -54,6 +58,12 @@ importers:
         version: 5.3.3
 
   packages/react:
+    dependencies:
+      shared:
+        specifier: workspace:*
+        version: link:../shared
+
+  packages/react-reconciler:
     dependencies:
       shared:
         specifier: workspace:*
