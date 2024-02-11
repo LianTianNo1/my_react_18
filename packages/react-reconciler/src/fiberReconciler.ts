@@ -8,8 +8,9 @@ import {
 } from './updateQueue';
 import { HostRoot } from './workTags';
 import { scheduleUpdateOnfiber } from './workLoop';
+import { Container } from 'hostConfig';
 
-export function createContainer(container) {
+export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null);
 	const root = new FiberRootNode(container, hostRootFiber);
 	hostRootFiber.updateQueue = createUpdateQueue();
