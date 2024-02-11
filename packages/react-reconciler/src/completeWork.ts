@@ -4,7 +4,12 @@ import {
 	createInstance,
 	createTextInstance
 } from 'react-dom/src/hostConfig';
-import { HostComponent, HostRoot, HostText } from './workTags';
+import {
+	FunctionComponent,
+	HostComponent,
+	HostRoot,
+	HostText
+} from './workTags';
 import { FiberNode } from './fiber';
 import { NoFlags } from './fiberFlags';
 
@@ -33,6 +38,10 @@ export const completeWork = (wip: FiberNode) => {
 
 			return null;
 		case HostRoot:
+			bubbleProperties(wip);
+			return null;
+
+		case FunctionComponent:
 			bubbleProperties(wip);
 			return null;
 		default:
