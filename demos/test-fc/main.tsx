@@ -8,6 +8,6 @@ function App() {
 	);
 }
 function Child() {
-	return <span>jimmy</span>;
+	return <span>jimm1y1</span>;
 }
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
