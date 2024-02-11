@@ -8,7 +8,7 @@ import {
 } from './updateQueue';
 import { HostRoot } from './workTags';
 import { scheduleUpdateOnfiber } from './workLoop';
-import { Container } from 'hostConfig';
+import { Container } from 'react-dom/src/hostConfig';
 
 export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null);

@@ -1,4 +1,4 @@
-import { Container, appendChildToContainer } from 'hostConfig';
+import { Container, appendChildToContainer } from 'react-dom/src/hostConfig';
 import { FiberNode, FiberRootNode } from './fiber';
 import { MutationMask, NoFlags, Placement } from './fiberFlags';
 import { HostComponent, HostRoot, HostText } from './workTags';
@@ -13,6 +13,7 @@ export function commitMutationEffects(finishedWork: FiberNode) {
 			nextEffect = child;
 		} else {
 			up: while (nextEffect !== null) {
+				commitMutationEffectsOnFiber(nextEffect);
 				const sibling: FiberNode | null = nextEffect.sibling;
 				if (sibling !== null) {
 					nextEffect = sibling;
@@ -26,7 +27,7 @@ export function commitMutationEffects(finishedWork: FiberNode) {
 
 function commitMutationEffectsOnFiber(finishedWork: FiberNode) {
 	const flag = finishedWork.flags;
-	if (flag & (Placement !== NoFlags)) {
+	if ((flag & Placement) !== NoFlags) {
 		commitPlacement(finishedWork);
 		finishedWork.flags &= ~Placement;
 	}
@@ -37,8 +38,9 @@ function commitPlacement(finishedWork: FiberNode) {
 		console.warn('执行Placement操作', finishedWork);
 	}
 	const hostParent = getHostParent(finishedWork);
-
-	appendPlacementNodeIntoContainer(finishedWork, finishedWork);
+	if (hostParent !== null) {
+		appendPlacementNodeIntoContainer(finishedWork, hostParent);
+	}
 }
 
 function getHostParent(fiber: FiberNode) {
@@ -49,13 +51,14 @@ function getHostParent(fiber: FiberNode) {
 			return parent.stateNode as Container;
 		}
 		if (parentTag === HostRoot) {
-			return parent.stateNode as FiberRootNode;
+			return (parent.stateNode as FiberRootNode).container;
 		}
 		parent = parent.return;
 	}
 	if (__DEV__) {
 		console.warn('未找到parent');
 	}
+	return null;
 }
 
 function appendPlacementNodeIntoContainer(
@@ -63,7 +66,7 @@ function appendPlacementNodeIntoContainer(
 	hostParent: Container
 ) {
 	if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
-		appendChildToContainer(finishedWork.stateNode, hostParent);
+		appendChildToContainer(hostParent, finishedWork.stateNode);
 		return;
 	}
 	const child = finishedWork.child;
