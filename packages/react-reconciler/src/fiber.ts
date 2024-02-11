@@ -16,6 +16,7 @@ export class FiberNode {
 	index: number;
 	alternate: FiberNode | null;
 	flags: Flags;
+	subtreeFlag: Flags;
 	updateQueue: unknown;
 	memoizedState: any;
 
@@ -37,6 +38,7 @@ export class FiberNode {
 		this.alternate = null;
 		// 宿主dom更新状态
 		this.flags = NoFlags;
+		this.subtreeFlag = NoFlags;
 		this.updateQueue = null;
 	}
 }
@@ -70,6 +72,7 @@ export const createWorkInProgress = (
 		// update
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
+		wip.subtreeFlag = NoFlags;
 	}
 	wip.type = current.type;
 	wip.updateQueue = current.updateQueue;

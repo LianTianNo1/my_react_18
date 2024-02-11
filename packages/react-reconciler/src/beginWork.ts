@@ -18,6 +18,7 @@ export const beginWork = (wip: FiberNode) => {
 			}
 			break;
 	}
+	return null;
 };
 function updateHostRoot(wip: FiberNode) {
 	const baseState = wip.memoizedState;
