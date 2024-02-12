@@ -1,6 +1,7 @@
 {
 	"compileOnSave": true,
 	"include": ["./packages/**/*"],
+	"exclude": ["./node_modules/**/*"],
 	"compilerOptions": {
 		"jsx": "react",
 		"target": "ESNext",
@@ -20,7 +21,8 @@
 		"skipLibCheck": true,
 		"baseUrl": "./packages",
 		"paths": {
-			"hostConfig": ["./react-dom/src/hostConfig"]
+			"hostConfig": ["./react-dom/src/hostConfig"],
+			"react-dom": ["./react-dom/index"]
 		}
 	}
 }

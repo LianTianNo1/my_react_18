@@ -6,6 +6,10 @@ export const version = '1.0.0';
 export const createElement = jsx;
 export const isValidElement = isValidElementFn;
 
+export default {
+	createElement: jsx
+};
+
 export const __SECRET_INTERNALS__ = {
 	currentDispatcher
 };

@@ -12,8 +12,9 @@ function prepareFreshStack(root: FiberRootNode) {
 }
 
 function renderRoot(root: FiberRootNode) {
-	// 初始化
+	// 初始化wip，主要是将root复制了一份，此时workInProgress与hostRootFiber完全相等
 	prepareFreshStack(root);
+	// 开始工作循环
 
 	do {
 		try {
@@ -44,6 +45,7 @@ function commitRoot(root: FiberRootNode) {
 	const subtreeHasEffect =
 		(finishedWork.subtreeFlag & MutationMask) !== NoFlags;
 	const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
+	debugger;
 	if (subtreeHasEffect || rootHasEffect) {
 		commitMutationEffects(finishedWork);
 		root.current = finishedWork;
@@ -53,6 +55,7 @@ function commitRoot(root: FiberRootNode) {
 }
 
 function workLoop() {
+	// 每次单元执行完毕之后都会将指针指向下一个工作单元，直到执行完所有工作单元
 	while (workInProgress !== null) {
 		preformUnitOfWork(workInProgress);
 	}
@@ -83,6 +86,7 @@ function completeUnitOfWork(fiber: FiberNode) {
 	} while (node !== null);
 }
 export function scheduleUpdateOnfiber(fiber: FiberNode) {
+	// 找到根节点，一切更新都需要从根节点开始遍历
 	const root = markUpdateFromFiberToRoot(fiber);
 	renderRoot(root);
 }
