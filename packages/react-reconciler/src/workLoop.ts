@@ -45,7 +45,6 @@ function commitRoot(root: FiberRootNode) {
 	const subtreeHasEffect =
 		(finishedWork.subtreeFlag & MutationMask) !== NoFlags;
 	const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
-	debugger;
 	if (subtreeHasEffect || rootHasEffect) {
 		commitMutationEffects(finishedWork);
 		root.current = finishedWork;
