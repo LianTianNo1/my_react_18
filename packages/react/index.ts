@@ -1,11 +1,11 @@
 import { Dispatcher, resolveDispatcher } from './src/currentDispatcher';
 import { jsx, isValidElement as isValidElementFn } from './src/jsx';
 import currentDispatcher from './src/currentDispatcher';
-
+import { REACT_ELEMENT_TYPE, REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols';
 export const version = '1.0.0';
 export const createElement = jsx;
 export const isValidElement = isValidElementFn;
-
+export const Fragment = REACT_FRAGMENT_TYPE;
 export default {
 	createElement: jsx
 };

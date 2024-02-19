@@ -1,16 +1,19 @@
 import { ReactElementType } from 'shared/ReactTypes';
+import { mountChildFibers, reconcileChildFibers } from './childFibers';
 import { FiberNode } from './fiber';
-import { UpdateQueue, processUpdateQueue } from './updateQueue';
+import { renderWithHooks } from './fiberHooks';
+import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import {
+	Fragment,
 	FunctionComponent,
 	HostComponent,
 	HostRoot,
 	HostText
 } from './workTags';
-import { mountChildFibers, reconcileChildFibers } from './childFibers';
-import { renderWithHooks } from './fiberHooks';
 
+// 递归中的递阶段
 export const beginWork = (wip: FiberNode) => {
+	// 比较，返回子fiberNode
 	switch (wip.tag) {
 		case HostRoot:
 			return updateHostRoot(wip);
@@ -20,6 +23,8 @@ export const beginWork = (wip: FiberNode) => {
 			return null;
 		case FunctionComponent:
 			return updateFunctionComponent(wip);
+		case Fragment:
+			return updateFragment(wip);
 		default:
 			if (__DEV__) {
 				console.warn('beginWork未实现的类型');
@@ -28,6 +33,19 @@ export const beginWork = (wip: FiberNode) => {
 	}
 	return null;
 };
+
+function updateFragment(wip: FiberNode) {
+	const nextChildren = wip.pendingProps;
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
+
+function updateFunctionComponent(wip: FiberNode) {
+	const nextChildren = renderWithHooks(wip);
+	reconcileChildren(wip, nextChildren);
+	return wip.child;
+}
+
 function updateHostRoot(wip: FiberNode) {
 	const baseState = wip.memoizedState;
 	const updateQueue = wip.updateQueue as UpdateQueue<Element>;
@@ -35,13 +53,8 @@ function updateHostRoot(wip: FiberNode) {
 	updateQueue.shared.pending = null;
 	const { memoizedState } = processUpdateQueue(baseState, pending);
 	wip.memoizedState = memoizedState;
-	const nextChildren = wip.memoizedState;
-	reconcileChildren(wip, nextChildren);
-	return wip.child;
-}
 
-function updateFunctionComponent(wip: FiberNode) {
-	const nextChildren = renderWithHooks(wip);
+	const nextChildren = wip.memoizedState;
 	reconcileChildren(wip, nextChildren);
 	return wip.child;
 }
@@ -55,9 +68,12 @@ function updateHostComponent(wip: FiberNode) {
 
 function reconcileChildren(wip: FiberNode, children?: ReactElementType) {
 	const current = wip.alternate;
+
 	if (current !== null) {
+		// update
 		wip.child = reconcileChildFibers(wip, current?.child, children);
 	} else {
+		// mount
 		wip.child = mountChildFibers(wip, null, children);
 	}
 }
