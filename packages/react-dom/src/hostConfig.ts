@@ -59,3 +59,12 @@ export function insertChildToContainer(
 ) {
 	container.insertBefore(child, before);
 }
+
+// 按照queueMicrotask Promise.resolve(null).then setTimeout优先级依次尝试
+export const scheduleMicroTask =
+	typeof queueMicrotask === 'function'
+		? queueMicrotask
+		: typeof Promise === 'function'
+			? (callback: (...args: any) => void) =>
+					Promise.resolve(null).then(callback)
+			: setTimeout;

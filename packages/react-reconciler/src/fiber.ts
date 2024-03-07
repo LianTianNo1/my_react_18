@@ -14,6 +14,7 @@ import {
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'react-dom/src/hostConfig';
 import { UpdateQueue } from './updateQueue';
+import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
 
 /**
  * `FiberNode` 类代表了React Fiber架构中的一个节点。
@@ -139,12 +140,16 @@ export class FiberRootNode {
 	container: Container;
 	current: FiberNode;
 	finishedWork: FiberNode | null;
+	pendingLanes: Lanes;
+	finishedLane: Lane;
 
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;
 		hostRootFiber.stateNode = this;
 		this.finishedWork = null;
+		this.pendingLanes = NoLanes;
+		this.finishedLane = NoLane;
 	}
 }
 /**
