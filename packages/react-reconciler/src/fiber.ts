@@ -15,6 +15,7 @@ import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'react-dom/src/hostConfig';
 import { UpdateQueue } from './updateQueue';
 import { Lane, Lanes, NoLane, NoLanes } from './fiberLanes';
+import { Effect } from './fiberHooks';
 
 /**
  * `FiberNode` 类代表了React Fiber架构中的一个节点。
@@ -89,7 +90,7 @@ export class FiberNode {
 	/**
 	 * 表示子树上的副作用标记。
 	 */
-	subtreeFlag: Flags;
+	subtreeFlags: Flags;
 
 	/**
 	 * 更新队列，用于记录组件状态的更新。
@@ -130,10 +131,14 @@ export class FiberNode {
 		this.alternate = null;
 
 		this.flags = NoFlags;
-		this.subtreeFlag = NoFlags;
+		this.subtreeFlags = NoFlags;
 		this.updateQueue = null;
 		this.deletions = null;
 	}
+}
+export interface PendingPassiveEffects {
+	unmount: Effect[];
+	update: Effect[];
 }
 
 export class FiberRootNode {
@@ -142,7 +147,7 @@ export class FiberRootNode {
 	finishedWork: FiberNode | null;
 	pendingLanes: Lanes;
 	finishedLane: Lane;
-
+	pendingPassiveEffects: PendingPassiveEffects;
 	constructor(container: Container, hostRootFiber: FiberNode) {
 		this.container = container;
 		this.current = hostRootFiber;
@@ -150,6 +155,11 @@ export class FiberRootNode {
 		this.finishedWork = null;
 		this.pendingLanes = NoLanes;
 		this.finishedLane = NoLane;
+
+		this.pendingPassiveEffects = {
+			unmount: [],
+			update: []
+		};
 	}
 }
 /**
@@ -174,7 +184,7 @@ export const createWorkInProgress = (
 		// update 由于之前wip有可能被使用过，所以需要进行属性的重置
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
-		wip.subtreeFlag = NoFlags;
+		wip.subtreeFlags = NoFlags;
 		wip.deletions = null;
 	}
 	wip.type = current.type;
